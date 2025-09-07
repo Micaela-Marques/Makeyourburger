@@ -1,6 +1,7 @@
 <template>
   <div>
     <Navbar />
+    <router-view />
     <Footer/>
   </div>
 </template>
@@ -16,5 +17,6 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  background: linear-gradient(135deg, #c02b2b 0%, #d68a18 100%);
 }
 </style>
