@@ -5,7 +5,7 @@
     </div>
     <div class="navLink">
       <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/cardapio">Cardapio</RouterLink>
+      <RouterLink to="/cardapio">Cardápio</RouterLink>
       <RouterLink to="/pedidos">Pedidos</RouterLink>
       <RouterLink to="/historico">Histórico</RouterLink>
     </div>
@@ -19,9 +19,9 @@
   </div>
 </template>
 
-<script setup>
+<script setup></script>
 
-</script>
+
 <style>
 #nav {
   background-color: #222;

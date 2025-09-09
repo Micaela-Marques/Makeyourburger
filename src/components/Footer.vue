@@ -21,49 +21,57 @@
 
 <script setup></script>
 
-<style>
+<style scoped>
 #footer {
-  background-color: #222;
-  border-top: 4px solid #111;
-  padding: 15px 50px;
+  background: linear-gradient(135deg, #222 0%, #333 100%);
+  border-top: 3px solid #edaa0b;
+  padding: 20px 50px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin-bottom: 0;
   position: fixed;
   left: 0;
   bottom: 0;
   width: 100%;
   z-index: 100;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .footer-content {
   display: flex;
   align-items: center;
-  justify-content:space-evenly;
+  justify-content: space-between;
   width: 100%;
+  max-width: 1200px;
 }
 
 .social-links {
   display: flex;
-  gap: 20px;
+  gap: 25px;
   align-items: center;
 }
 
 .social-link {
   display: flex;
   align-items: center;
-  transition: transform 0.3s ease;
+  padding: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
 }
 
 .social-link:hover {
-  transform: scale(1.1);
+  transform: scale(1.15);
+  background-color: #edaa0b;
+  box-shadow: 0 4px 12px rgba(237, 170, 11, 0.3);
 }
 
 .social-link img {
-  width: 18px;
-  height: 14px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 .footer-text {
@@ -73,5 +81,46 @@
 .footer-text p {
   margin: 0;
   font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  #footer {
+    padding: 15px 20px;
+  }
+  
+  .footer-content {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .social-links {
+    gap: 20px;
+  }
+  
+  .social-link {
+    padding: 6px;
+  }
+  
+  .social-link img {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  #footer {
+    padding: 12px 15px;
+  }
+  
+  .social-links {
+    gap: 15px;
+  }
+  
+  .footer-text p {
+    font-size: 12px;
+  }
 }
 </style>
