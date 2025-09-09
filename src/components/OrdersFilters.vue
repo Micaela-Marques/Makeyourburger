@@ -12,7 +12,7 @@
         v-for="status in orderStatuses"
         :key="status.id"
         :class="['filter-btn', { active: activeFilter === status.id }]"
-        @click="$emit('update:activeFilter', status.id)"
+        @click="handleFilterClick(status.id)"
         type="button"
       >
         <span>{{ status.icon }}</span> {{ status.name }}
@@ -37,7 +37,11 @@ const props = defineProps({
   }
 });
 
-defineEmits(['update:searchQuery', 'update:activeFilter']);
+const emit = defineEmits(['update:searchQuery', 'update:activeFilter']);
+
+const handleFilterClick = (statusId) => {
+  emit('update:activeFilter', statusId);
+};
 </script>
 
 <style scoped>
