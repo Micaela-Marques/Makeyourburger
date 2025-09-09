@@ -27,9 +27,12 @@ import OrdersList from "../components/OrdersList.vue";
 
 // 👉 importa serviços/db
 import {
-  getOrderHistory,
+  getAllOrders,
+  getOrdersByStatus,
   cancelOrder as cancelOrderService,
-} from "@db/cart.js";
+  getOrderStats,
+  searchOrders
+} from "@db/orders.js";
 
 // ---------------- STATE ----------------
 const searchQuery = ref("");
@@ -39,49 +42,41 @@ const expandedOrders = ref([]);
 
 // ---------------- ESTATÍSTICAS ----------------
 const stats = computed(() => {
-  const total = orders.value.length;
-  const emAndamento = orders.value.filter((o) =>
-    ["preparing", "delivering"].includes(o.status)
-  ).length;
-  const concluido = orders.value.filter((o) => o.status === "delivered").length;
-  const cancelado = orders.value.filter((o) => o.status === "cancelled").length;
-
+  const orderStats = getOrderStats();
   return [
-    { label: "Total", value: total, icon: "📦" },
-    { label: "Em andamento", value: emAndamento, icon: "⏳" },
-    { label: "Concluídos", value: concluido, icon: "✅" },
-    { label: "Cancelados", value: cancelado, icon: "❌" },
+    { label: "Total", value: orderStats.total, icon: "📦" },
+    { label: "Em andamento", value: orderStats.emAndamento, icon: "⏳" },
+    { label: "Concluídos", value: orderStats.concluidos, icon: "✅" },
+    { label: "Cancelados", value: orderStats.cancelados, icon: "❌" },
   ];
 });
 
 // ---------------- STATUS DISPONÍVEIS ----------------
 const orderStatuses = [
   { id: "all", name: "Todos", icon: "📦" },
-  { id: "preparing", name: "Preparando", icon: "👨‍🍳" },
-  { id: "delivering", name: "A caminho", icon: "🚚" },
-  { id: "delivered", name: "Entregue", icon: "✅" },
-  { id: "cancelled", name: "Cancelado", icon: "❌" },
+  { id: "preparando", name: "Preparando", icon: "👨‍🍳" },
+  { id: "a_caminho", name: "A caminho", icon: "🚚" },
+  { id: "entregue", name: "Entregue", icon: "✅" },
+  { id: "cancelado", name: "Cancelado", icon: "❌" },
 ];
 
 // ---------------- FILTRO FINAL ----------------
 const filteredOrders = computed(() => {
-  return orders.value.filter((o) => {
-    const matchStatus =
-      activeFilter.value === "all" || o.status === activeFilter.value;
-    const matchSearch =
-      !searchQuery.value ||
-      o.items.some((i) =>
-        i.burger?.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-      ) ||
-      o.deliveryAddress
-        ?.toLowerCase()
-        .includes(searchQuery.value.toLowerCase()) ||
-      o.paymentMethod
-        ?.toLowerCase()
-        .includes(searchQuery.value.toLowerCase()) ||
-      o.id.toString().includes(searchQuery.value);
-    return matchStatus && matchSearch;
-  });
+  let filtered = orders.value;
+  
+  // Aplicar filtro de status
+  if (activeFilter.value !== "all") {
+    filtered = filtered.filter(order => order.status === activeFilter.value);
+  }
+  
+  // Aplicar filtro de busca
+  if (searchQuery.value) {
+    filtered = searchOrders(searchQuery.value).filter(order => 
+      filtered.includes(order)
+    );
+  }
+  
+  return filtered;
 });
 
 // ---------------- AÇÕES ----------------
@@ -95,7 +90,7 @@ const toggleOrderDetails = (id) => {
 
 const cancelOrder = async (id) => {
   await cancelOrderService(id);
-  orders.value = await getOrderHistory();
+  orders.value = getAllOrders();
 };
 
 const reorderItems = (order) => {
@@ -104,7 +99,7 @@ const reorderItems = (order) => {
 
 // ---------------- MONTAGEM ----------------
 onMounted(async () => {
-  orders.value = await getOrderHistory();
+  orders.value = getAllOrders();
 });
 </script>
 
