@@ -83,7 +83,31 @@ export const applyDiscount = (price, discountPercent) => {
 
 // Função para formatar preço
 export const formatPrice = (price) => {
-  return `R$ ${price.toFixed(2).replace('.', ',')}`
+  if (price === null || price === undefined || isNaN(price)) {
+    return 'R$ 0,00'
+  }
+  return `R$ ${Number(price).toFixed(2).replace('.', ',')}`
+}
+
+// Função para formatar data
+export const formatDate = (dateString) => {
+  if (!dateString) return 'Data não disponível'
+  
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return 'Data inválida'
+    
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  } catch (error) {
+    console.error('Erro ao formatar data:', error)
+    return 'Data inválida'
+  }
 }
 
 // Função para obter tempo estimado de preparo médio

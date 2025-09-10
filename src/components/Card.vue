@@ -103,10 +103,12 @@ import {
   burgerData, 
   categories, 
   getBurgersByCategory, 
-  searchBurgers,
+  searchBurgers
+} from '../db/index.js'
+import { 
   addToCart as addToCartService,
   getCartSummary
-} from '../db/index.js'
+} from '../db/cart.js'
 
 
 const searchQuery = ref('')
@@ -278,22 +280,25 @@ onMounted(() => {
 .card-details {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 320px;
+  min-width: 320px;
   max-width: 320px;
+  min-height: 480px;
+  max-height: 480px;
   background-color: #fff;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  transition: all 0.3s ease;
   border: 1px solid rgba(0, 0, 0, 0.05);
   position: relative;
+  transition: none;
 }
 
 .card-details:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  /* Remove efeito de expandir */
+  transform: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
-
 
 .image-container {
   position: relative;
@@ -306,11 +311,12 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: none;
 }
 
 .card-details:hover .burgerimg {
-  transform: scale(1.05);
+  /* Remove efeito de expandir imagem */
+  transform: none;
 }
 
 .new-badge {
@@ -354,13 +360,9 @@ onMounted(() => {
   flex-grow: 1;
 }
 
-
+/* Remover efeito de expandir */
 .expanded-details {
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 15px;
-  animation: slideDown 0.3s ease;
+  display: none !important;
 }
 
 @keyframes slideDown {
@@ -415,7 +417,6 @@ onMounted(() => {
   color: #666;
   font-weight: 500;
 }
-
 
 .quantity-control {
   display: flex;
@@ -501,7 +502,6 @@ onMounted(() => {
   transform: translateY(0);
 }
 
-
 @media (max-width: 768px) {
   .cards-container {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -529,6 +529,13 @@ onMounted(() => {
   .image-container {
     height: 180px;
   }
+  .card-details {
+    width: 280px;
+    min-width: 280px;
+    max-width: 280px;
+    min-height: 440px;
+    max-height: 440px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -544,6 +551,10 @@ onMounted(() => {
   
   .card-details {
     max-width: 100%;
+    min-width: 100%;
+    width: 100%;
+    min-height: 400px;
+    max-height: 100%;
   }
 }
 </style>

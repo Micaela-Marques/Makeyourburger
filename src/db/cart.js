@@ -1,4 +1,3 @@
-// Sistema de carrinho de compras
 import { getBurgerById, formatPrice } from './index.js'
 
 // Estado do carrinho
@@ -23,6 +22,7 @@ export const addToCart = (burgerId, quantity = 1) => {
   }
   
   updateCartTotal()
+  saveCartToStorage() // ✅ salvar no localStorage sempre que adicionar
   return true
 }
 
@@ -30,6 +30,7 @@ export const addToCart = (burgerId, quantity = 1) => {
 export const removeFromCart = (burgerId) => {
   cartItems = cartItems.filter(item => item.burgerId !== burgerId)
   updateCartTotal()
+  saveCartToStorage() // ✅ salvar após remover
 }
 
 // Função para atualizar quantidade de um item
@@ -41,6 +42,7 @@ export const updateCartItemQuantity = (burgerId, quantity) => {
     } else {
       item.quantity = quantity
       updateCartTotal()
+      saveCartToStorage() // ✅ salvar após atualizar
     }
   }
 }
@@ -49,6 +51,7 @@ export const updateCartItemQuantity = (burgerId, quantity) => {
 export const clearCart = () => {
   cartItems = []
   cartTotal = 0
+  saveCartToStorage() // ✅ salvar carrinho vazio
 }
 
 // Função para obter itens do carrinho
@@ -132,7 +135,7 @@ export const loadCartFromStorage = () => {
 
 // Função para obter histórico de pedidos (simulado)
 export const getOrderHistory = () => {
-  const savedOrders = localStorage.getItem('orderHistory')
+  const savedOrders = localStorage.getItem('orders')
   return savedOrders ? JSON.parse(savedOrders) : []
 }
 
@@ -144,20 +147,109 @@ export const saveOrder = (orderData) => {
       id: Date.now(),
       ...orderData,
       createdAt: new Date().toISOString(),
-      status: 'confirmado'
+      status: 'confirmado',
+      statusHistory: [
+        {
+          status: 'confirmado',
+          timestamp: new Date().toISOString(),
+          message: 'Pedido confirmado e enviado para a cozinha'
+        }
+      ],
+      estimatedDeliveryTime: orderData.estimatedTime || '30-45 min',
+      trackingCode: generateTrackingCode()
     }
     
     orderHistory.unshift(newOrder)
-    localStorage.setItem('orderHistory', JSON.stringify(orderHistory))
+    localStorage.setItem('orders', JSON.stringify(orderHistory))
+    
+    // Simular progressão do pedido
+    simulateOrderProgress(newOrder.id)
     
     // Limpar carrinho após salvar pedido
     clearCart()
-    saveCartToStorage()
     
     return newOrder
   } catch (error) {
     console.error('Erro ao salvar pedido:', error)
     return null
+  }
+}
+
+// Função para gerar código de rastreamento
+const generateTrackingCode = () => {
+  return 'MB' + Math.random().toString(36).substr(2, 8).toUpperCase()
+}
+
+// Função para simular progressão do pedido
+const simulateOrderProgress = (orderId) => {
+  const orderHistory = getOrderHistory()
+  const order = orderHistory.find(o => o.id === orderId)
+  
+  if (!order) return
+  
+  // Simular mudanças de status ao longo do tempo
+  setTimeout(() => {
+    updateOrderStatus(orderId, 'preparando', 'Pedido em preparo na cozinha')
+  }, 30000) // 30 segundos
+  
+  setTimeout(() => {
+    updateOrderStatus(orderId, 'saiu_entrega', 'Pedido saiu para entrega')
+  }, 120000) // 2 minutos
+  
+  setTimeout(() => {
+    updateOrderStatus(orderId, 'entregue', 'Pedido entregue com sucesso!')
+  }, 300000) // 5 minutos
+}
+
+// Função para atualizar status do pedido
+export const updateOrderStatus = (orderId, newStatus, message) => {
+  try {
+    const orderHistory = getOrderHistory()
+    const order = orderHistory.find(o => o.id === orderId)
+    
+    if (order) {
+      order.status = newStatus
+      order.statusHistory.push({
+        status: newStatus,
+        timestamp: new Date().toISOString(),
+        message: message
+      })
+      
+      localStorage.setItem('orders', JSON.stringify(orderHistory))
+    }
+  } catch (error) {
+    console.error('Erro ao atualizar status do pedido:', error)
+  }
+}
+
+// Função para obter histórico de status de um pedido
+export const getOrderStatusHistory = (orderId) => {
+  const orderHistory = getOrderHistory()
+  const order = orderHistory.find(o => o.id === orderId)
+  return order ? order.statusHistory : []
+}
+
+// Função para cancelar pedido
+export const cancelOrder = (orderId) => {
+  try {
+    const orderHistory = getOrderHistory()
+    const order = orderHistory.find(o => o.id === orderId)
+    
+    if (order && order.status !== 'entregue' && order.status !== 'cancelado') {
+      order.status = 'cancelado'
+      order.statusHistory.push({
+        status: 'cancelado',
+        timestamp: new Date().toISOString(),
+        message: 'Pedido cancelado pelo cliente'
+      })
+      
+      localStorage.setItem('orders', JSON.stringify(orderHistory))
+      return true
+    }
+    return false
+  } catch (error) {
+    console.error('Erro ao cancelar pedido:', error)
+    return false
   }
 }
 

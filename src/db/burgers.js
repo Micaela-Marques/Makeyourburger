@@ -6,7 +6,7 @@ export const burgerData = [
     description: "Pão brioche, hambúrguer 180g, cheddar defumado, bacon, cebola caramelizada e molho barbecue.",
     ingredients: ["Pão brioche", "Hambúrguer 180g", "Cheddar defumado", "Bacon", "Cebola caramelizada", "Molho barbecue"],
     price: 34.90,
-    image: "/src/assets/burger.jpg",
+    image: "../assets/burger/close-vertical-de-um-hamburguer-saboroso-com-bacon-em-uma-parede-preta.jpg",
     category: "Clássicos",
     calories: 650,
     prepTime: 15,

@@ -2,7 +2,10 @@
   <div class="menu-page">
     <div class="menu-header">
       <h1>Nosso Cardápio</h1>
-      <p class="menu-subtitle">Descubra nossos hambúrgueres artesanais preparados com ingredientes frescos</p>
+      <p class="menu-subtitle">
+        Descubra nossos hambúrgueres artesanais preparados com ingredientes
+        frescos
+      </p>
     </div>
     <Card />
   </div>
@@ -16,7 +19,6 @@ import Card from "../components/Card.vue";
 .menu-page {
   min-height: calc(100vh - 120px); /* Ajusta para navbar e footer */
   padding: 40px 0 80px 0; /* Espaço para o footer fixo */
-  background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #CD853F 100%);
 }
 
 .menu-header {
@@ -49,11 +51,11 @@ import Card from "../components/Card.vue";
   .menu-page {
     padding: 20px 0 80px 0;
   }
-  
+
   .menu-header h1 {
     font-size: 2.2rem;
   }
-  
+
   .menu-subtitle {
     font-size: 1rem;
     padding: 0 20px;
@@ -64,7 +66,7 @@ import Card from "../components/Card.vue";
   .menu-header h1 {
     font-size: 1.8rem;
   }
-  
+
   .menu-subtitle {
     font-size: 0.9rem;
   }
