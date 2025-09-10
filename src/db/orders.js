@@ -1,7 +1,4 @@
-// Sistema de gerenciamento de pedidos
-// Este arquivo contém todas as funções e dados relacionados aos pedidos
 
-// ==================== DADOS DE EXEMPLO ====================
 const sampleOrders = [
   {
     id: 1,

@@ -7,8 +7,8 @@
 </template>
 
 <script setup>
-import Navbar from "./components/Navbar.vue";
-import Footer from "./components/Footer.vue";
+import Navbar from "@components/Navbar.vue";
+import Footer from "@components/Footer.vue";
 </script>
 
 <style>
@@ -17,9 +17,9 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  background-color: chocolate;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
+
 }
 
 * {

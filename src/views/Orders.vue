@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 
 // 👉 importa os componentes prontos
 import OrdersFilters from "../components/OrdersFilters.vue";
@@ -54,15 +54,17 @@ const stats = computed(() => {
 // ---------------- STATUS DISPONÍVEIS ----------------
 const orderStatuses = [
   { id: "all", name: "Todos", icon: "📦" },
+  { id: "confirmado", name: "Confirmado", icon: "✅" },
   { id: "preparando", name: "Preparando", icon: "👨‍🍳" },
   { id: "a_caminho", name: "A caminho", icon: "🚚" },
-  { id: "entregue", name: "Entregue", icon: "✅" },
-  { id: "cancelado", name: "Cancelado", icon: "❌" },
 ];
 
 // ---------------- FILTRO FINAL ----------------
 const filteredOrders = computed(() => {
-  let filtered = orders.value;
+  // Primeiro, filtrar apenas pedidos ativos (confirmado, preparando e a_caminho)
+  let filtered = orders.value.filter(order => 
+    ['confirmado', 'preparando', 'a_caminho'].includes(order.status)
+  );
   
   // Aplicar filtro de status
   if (activeFilter.value !== "all") {
@@ -72,7 +74,7 @@ const filteredOrders = computed(() => {
   // Aplicar filtro de busca
   if (searchQuery.value) {
     filtered = searchOrders(searchQuery.value).filter(order => 
-      filtered.includes(order)
+      filtered.includes(order) && ['confirmado', 'preparando', 'a_caminho'].includes(order.status)
     );
   }
   
@@ -97,9 +99,24 @@ const reorderItems = (order) => {
   console.log("Reordenar:", order);
 };
 
+// ---------------- ATUALIZAÇÃO AUTOMÁTICA ----------------
+let updateInterval;
+
+const updateOrders = () => {
+  orders.value = getAllOrders();
+};
+
 // ---------------- MONTAGEM ----------------
 onMounted(async () => {
-  orders.value = getAllOrders();
+  updateOrders();
+  // Atualizar a cada 5 segundos para verificar mudanças de status
+  updateInterval = setInterval(updateOrders, 5000);
+});
+
+onUnmounted(() => {
+  if (updateInterval) {
+    clearInterval(updateInterval);
+  }
 });
 </script>
 
@@ -111,5 +128,6 @@ onMounted(async () => {
   flex-direction: column;
   margin: 0 auto;
   width: 700px;
+  padding-bottom: 80px; /* afasta do footer */
 }
 </style>

@@ -1,74 +1,82 @@
 <template>
-  <div class="menu-page">
-    <div class="menu-header">
-      <h1>Nosso Cardápio</h1>
-      <p class="menu-subtitle">
-        Descubra nossos hambúrgueres artesanais preparados com ingredientes
-        frescos
-      </p>
+  <div class="menu-section">
+    <!-- Barra de busca e filtros -->
+    <SearchFilterBar
+      v-model:searchQuery="searchQuery"
+      v-model:activeFilter="activeFilter"
+      :categories="availableCategories"
+    />
+
+    <!-- Grid de cards -->
+    <div class="cards-container">
+      <BurgerCard
+        v-for="burger in filteredBurgers"
+        :key="burger.id"
+        :burger="burger"
+        @increaseQuantity="increaseQuantity"
+        @decreaseQuantity="decreaseQuantity"
+        @addToCart="addToCart"
+      />
     </div>
-    <Card />
   </div>
 </template>
 
 <script setup>
-import Card from "../components/Card.vue";
+import { ref, computed, onMounted } from 'vue'
+import SearchFilterBar from '../components/SearchFilterBar.vue'
+import BurgerCard from '../components/BurgerCard.vue'
+import { burgerData, categories, getBurgersByCategory, searchBurgers } from '../db/index.js'
+import { addToCart as addToCartService } from '../db/cart.js'
+
+const searchQuery = ref('')
+const activeFilter = ref('Todos')
+const burgers = ref([])
+
+const availableCategories = computed(() => categories.map(cat => cat.name))
+
+const filteredBurgers = computed(() => {
+  let filtered = burgers.value
+  if (activeFilter.value !== 'Todos') {
+    filtered = getBurgersByCategory(activeFilter.value.toLowerCase())
+  }
+  if (searchQuery.value) {
+    filtered = searchBurgers(searchQuery.value)
+  }
+  return filtered
+})
+
+const increaseQuantity = (id) => {
+  const burger = burgers.value.find(b => b.id === id)
+  if (burger) burger.quantity++
+}
+
+const decreaseQuantity = (id) => {
+  const burger = burgers.value.find(b => b.id === id)
+  if (burger && burger.quantity > 1) burger.quantity--
+}
+
+const addToCart = (burger) => {
+  const success = addToCartService(burger.id, burger.quantity)
+  if (success) console.log('Adicionado ao carrinho:', burger.name)
+}
+
+onMounted(() => {
+  burgers.value = [...burgerData]
+})
 </script>
 
 <style scoped>
-.menu-page {
-  min-height: calc(100vh - 120px); /* Ajusta para navbar e footer */
-  padding: 40px 0 80px 0; /* Espaço para o footer fixo */
-}
 
-.menu-header {
-  text-align: center;
-  margin-bottom: 40px;
-  padding: 0 20px;
-}
-
-.menu-header h1 {
-  font-size: 3rem;
-  color: #fff;
-  margin: 0 0 16px 0;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-  letter-spacing: 1px;
-}
-
-.menu-subtitle {
-  font-size: 1.2rem;
-  color: #f5f5f5;
-  margin: 0;
-  max-width: 600px;
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
   margin: 0 auto;
-  line-height: 1.6;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  justify-content: center;
+  align-content: center;
+  max-width: 1400px;
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-  .menu-page {
-    padding: 20px 0 80px 0;
-  }
 
-  .menu-header h1 {
-    font-size: 2.2rem;
-  }
 
-  .menu-subtitle {
-    font-size: 1rem;
-    padding: 0 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .menu-header h1 {
-    font-size: 1.8rem;
-  }
-
-  .menu-subtitle {
-    font-size: 0.9rem;
-  }
-}
 </style>

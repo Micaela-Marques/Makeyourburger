@@ -1,3 +1,4 @@
+
 <!-- Exemplo de uso de aliases em componentes Vue -->
 <template>
   <div class="example-component">

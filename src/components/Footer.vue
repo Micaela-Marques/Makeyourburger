@@ -1,5 +1,5 @@
 <template>
-  <div id="footer">
+  <footer id="footer">
     <div class="footer-content">
       <div class="social-links">
         <a href="https://facebook.com" target="_blank" class="social-link" aria-label="Facebook">
@@ -16,26 +16,25 @@
         <p>Make Your Burger © 2025</p>
       </div>
     </div>
-  </div>
+  </footer>
 </template>
 
 <script setup></script>
 
 <style scoped>
 #footer {
-  background: linear-gradient(135deg, #222 0%, #333 100%);
+  background: linear-gradient(135deg, #851212 0%, #ac1313 100%);
   border-top: 3px solid #edaa0b;
   padding: 20px 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0;
-  position: fixed;
-  left: 0;
-  bottom: 0;
   width: 100%;
   z-index: 100;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  /* Remove position: fixed para não sobrepor conteúdo */
+  position: relative;
+  margin-top: 48px; /* Espaço entre o conteúdo e o footer */
 }
 
 .footer-content {
@@ -89,6 +88,7 @@
 @media (max-width: 768px) {
   #footer {
     padding: 15px 20px;
+    margin-top: 32px;
   }
   
   .footer-content {
@@ -113,6 +113,7 @@
 @media (max-width: 480px) {
   #footer {
     padding: 12px 15px;
+    margin-top: 24px;
   }
   
   .social-links {
